@@ -1,0 +1,282 @@
+{
+  "info": {
+    "_postman_id": "d728000e-05cb-463c-bc0a-d32f668f16e4",
+    "name": "Cinema API",
+    "description": "API de Reserva de Ingressos de Cinema desenvolvida com Django REST Framework.  \n  \nFluxo principal do sistema:EndFragment  \n  \n1\\. Cadastro de usuário  \n2\\. Login e obtenção de token JWT  \n3\\. Listagem de filmes  \n4\\. Listagem de sessões por filme  \n5\\. Visualização do mapa de assentos por sessão  \n6\\. Reserva temporária de assento (lock de 10 minutos)  \n7\\. Checkout do assento reservado  \n8\\. Geração de ingresso digital  \n9\\. Listagem de ingressos do usuário autenticadoEndFragment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50912498",
+    "_collection_link": "https://go.postman.co/collection/50912498-d728000e-05cb-463c-bc0a-d32f668f16e4?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"gustavobarbosa\",\r\n  \"email\": \"gustavo.barbosa@hotmail.com\",\r\n  \"password\": \"12345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/users/register/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "register",
+                ""
+              ]
+            },
+            "description": "Realiza o cadastro de um novo usuário no sistema.\n\nBody da requisição:\n\n- username: nome de usuário único\n    \n- email: e-mail único\n    \n- password: senha do usuário\n    \n\nResposta de sucesso:\n\n- Status 201 Created\n    \n- Retorna os dados do usuário criado"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"gustavoinagaki\",\r\n  \"password\": \"12345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/users/login/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "login",
+                ""
+              ]
+            },
+            "description": "Autentica um usuário e retorna tokens JWT.\n\nBody da requisição:\n\n- username\n    \n- password\n    \n\nResposta de sucesso:\n\n- Status 200 OK\n    \n- Retorna:\n    \n    - access token\n        \n    - refresh token"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "item": [
+        {
+          "name": "List Movies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/movies/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "movies",
+                ""
+              ]
+            },
+            "description": "Retorna uma lista paginada de filmes disponíveis.\n\nResposta de sucesso:\n\n- Status 200 OK\n    \n- Lista contendo:\n    \n    - título\n        \n    - descrição\n        \n    - duração\n        \n    - data de lançamento"
+          },
+          "response": []
+        },
+        {
+          "name": "List Sessions by Movie",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/movies/1/sessions/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "movies",
+                "1",
+                "sessions",
+                ""
+              ]
+            },
+            "description": "Retorna as sessões disponíveis de um filme específico.\n\nParâmetro na URL:\n\n- movie_id: ID do filme\n    \n\nResposta de sucesso:\n\n- Status 200 OK\n    \n- Lista paginada de sessões com:\n    \n    - horário de início\n        \n    - sala\n        \n    - filme relacionado"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Seats",
+      "item": [
+        {
+          "name": "List Seats by Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/movies/sessions/1/seats/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "movies",
+                "sessions",
+                "1",
+                "seats",
+                ""
+              ]
+            },
+            "description": "Retorna o mapa de assentos de uma sessão específica.\n\nParâmetro na URL:\n\n- session_id: ID da sessão\n    \n\nCada assento possui status:\n\n- available (disponível)\n    \n- reserved (reservado temporariamente)\n    \n- purchased (comprado)\n    \n\nResposta de sucesso:\n\n- Status 200 OK\n    \n- Lista paginada de assentos"
+          },
+          "response": []
+        },
+        {
+          "name": "Reserve Seat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczNzUwOTYxLCJpYXQiOjE3NzM3NDczNjEsImp0aSI6IjQyMmZkMTgzZTcwNDRiMmJhM2NlZWE0MjhhMWJhY2FlIiwidXNlcl9pZCI6IjEifQ.Tk-BNuIvAEt6RBdX8ghy0M8-juZooYEDBXNUmqsXcNY",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/movies/seats/1/reserve/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "movies",
+                "seats",
+                "1",
+                "reserve",
+                ""
+              ]
+            },
+            "description": "Realiza a reserva temporária de um assento.\n\nRequer autenticação JWT.\n\nParâmetro na URL:\n\n- seat_id: ID do assento\n    \n\nRegras:\n\n- O usuário deve estar autenticado\n    \n- O assento deve estar disponível\n    \n- Se já estiver reservado e o tempo de lock não expirou, a reserva é negada\n    \n- O lock dura 10 minutos\n    \n\nResposta de sucesso:\n\n- Status 200 OK\n    \n- Mensagem confirmando a reserva"
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout Seat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczNzUwOTYxLCJpYXQiOjE3NzM3NDczNjEsImp0aSI6IjQyMmZkMTgzZTcwNDRiMmJhM2NlZWE0MjhhMWJhY2FlIiwidXNlcl9pZCI6IjEifQ.Tk-BNuIvAEt6RBdX8ghy0M8-juZooYEDBXNUmqsXcNY",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/movies/seats/1/checkout/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "movies",
+                "seats",
+                "1",
+                "checkout",
+                ""
+              ]
+            },
+            "description": "Finaliza a reserva do assento e gera um ingresso digital.\n\nRequer autenticação JWT.\n\nParâmetro na URL:\n\n- seat_id: ID do assento reservado\n    \n\nRegras:\n\n- O usuário deve estar autenticado\n    \n- O assento deve estar reservado\n    \n- Apenas o usuário que reservou pode finalizar\n    \n- Se o tempo de reserva expirou, o checkout falha\n    \n\nResposta de sucesso:\n\n- Status 201 Created\n    \n- Retorna:\n    \n    - código do ingresso\n        \n    - filme\n        \n    - sessão\n        \n    - assento"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "My Tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczNzUwOTYxLCJpYXQiOjE3NzM3NDczNjEsImp0aSI6IjQyMmZkMTgzZTcwNDRiMmJhM2NlZWE0MjhhMWJhY2FlIiwidXNlcl9pZCI6IjEifQ.Tk-BNuIvAEt6RBdX8ghy0M8-juZooYEDBXNUmqsXcNY",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/tickets/my-tickets/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "tickets",
+                "my-tickets",
+                ""
+              ]
+            },
+            "description": "Retorna todos os ingressos do usuário autenticado.\n\nRequer autenticação JWT.\n\nResposta de sucesso:\n\n- Status 200 OK\n    \n- Lista paginada contendo:\n    \n    - código do ingresso\n        \n    - filme\n        \n    - horário da sessão\n        \n    - assento\n        \n    - data de criação"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
